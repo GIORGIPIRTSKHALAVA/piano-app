@@ -1,26 +1,383 @@
-@import "tailwindcss";
+/* Piano App Global Styles */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Piano Colors */
+  --piano-white: #ffffff;
+  --piano-white-shadow: #f8f8f8;
+  --piano-white-pressed: #e8e8e8;
+  --piano-black: #1a1a1a;
+  --piano-black-hover: #2a2a2a;
+  --piano-black-pressed: #0a0a0a;
+  
+  /* App Colors */
+  --primary-bg: #0f0f23;
+  --secondary-bg: #1a1a2e;
+  --accent-color: #e94560;
+  --accent-hover: #d63447;
+  --text-primary: #ffffff;
+  --text-secondary: #b8b8b8;
+  --text-muted: #666666;
+  
+  /* Gradients */
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --gradient-dark: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 100%);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--primary-bg);
+  color: var(--text-primary);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* Animated Background */
+body::before {
+  content: '';
+  position: fixed;
+  background-image: url('https://www.google.com/url?sa=i&url=https%3A%2F%2Funsplash.com%2Fphotos%2Fa-close-up-of-a-piano-with-a-person-in-the-background-8QrPJ3Kfie4&psig=AOvVaw11SAyImIuL35AIZdHB_uSf&ust=1749150373552000&source=images&cd=vfe&opi=89978449&ved=0CBAQjRxqFwoTCKCdjNm62I0DFQAAAAAdAAAAABAJ');
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.1) 0%, transparent 50%);
+    
+
+  z-index: -1;
+  animation: bgShift 20s ease-in-out infinite;
+}
+
+@keyframes bgShift {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.1) rotate(1deg); }
+}
+
+/* Glass Morphism Container */
+.glass-container {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Piano Container Styles */
+.piano-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding: 2rem;
+  gap: 2rem;
+}
+
+.piano-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem;
+  font-weight: 700;
+  background: var(--gradient-primary);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: center;
+  margin-bottom: 1rem;
+  text-shadow: 0 0 30px rgba(102, 126, 234, 0.5);
+}
+
+.piano-subtitle {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+/* Piano Keyboard Container */
+.piano-keyboard-container {
+  padding: 2rem;
+  border-radius: 25px;
+  background: 
+    linear-gradient(145deg, #2a2a2a 0%, #1a1a1a 100%);
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+}
+
+.piano-keyboard-container::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: var(--gradient-primary);
+  border-radius: 27px;
+  z-index: -1;
+  opacity: 0.3;
+}
+
+/* Enhanced Piano Key Styles */
+.piano-key {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: bottom;
+  will-change: transform;
+}
+
+.piano-key:hover {
+  transform: translateY(-2px) scale(1.02);
+}
+
+.piano-key:active {
+  transform: translateY(4px) scale(0.98);
+}
+
+.piano-key.playing {
+  animation: keyPress 0.3s ease-out;
+}
+
+@keyframes keyPress {
+  0% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(6px) scale(0.95); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+/* Current Note Display */
+.current-note-display {
+  padding: 1rem 2rem;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: 15px;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--accent-color);
+  min-width: 200px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Covers Page Styles */
+.covers-page {
+  min-height: 100vh;
+  padding: 2rem;
+  background: var(--primary-bg);
+}
+
+.covers-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.covers-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: var(--gradient-secondary);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 1rem;
+}
+
+.covers-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+}
+
+/* Covers Grid */
+.covers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Cover Card */
+.cover-card {
+  position: relative;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 10px 40px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.cover-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.4),
+    0 0 30px rgba(233, 69, 96, 0.3);
+  border-color: var(--accent-color);
+}
+
+.cover-card.playing {
+  animation: cardPulse 2s ease-in-out infinite;
+  border-color: var(--accent-color);
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.4),
+    0 0 40px rgba(233, 69, 96, 0.5);
+}
+
+@keyframes cardPulse {
+  0%, 100% { box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 0 0 40px rgba(233, 69, 96, 0.5); }
+  50% { box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 0 0 60px rgba(233, 69, 96, 0.8); }
+}
+
+/* Cover Image */
+.cover-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.cover-card:hover .cover-image {
+  transform: scale(1.1);
+}
+
+/* Cover Content */
+.cover-content {
+  padding: 1.5rem;
+}
+
+.cover-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.cover-artist {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+.cover-duration {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* Play Button Overlay */
+.play-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  width: 60px;
+  height: 60px;
+  background-image: var(--accent-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.5rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 25px rgba(233, 69, 96, 0.4);
+}
+
+.cover-card:hover .play-overlay {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.cover-card.playing .play-overlay {
+  transform: translate(-50%, -50%) scale(1);
+  background: var(--accent-hover);
+}
+
+/* Navigation */
+.nav-container {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.nav-button {
+  padding: 0.8rem 1.5rem;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  color: var(--text-primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.nav-button:hover {
+  background: var(--accent-color);
+  border-color: var(--accent-color);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(233, 69, 96, 0.3);
+}
+
+.nav-button.active {
+  background: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
+/* Loading Animation */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--glass-border);
+  border-top: 3px solid var(--accent-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .piano-title {
+    font-size: 2rem;
+  }
+  
+  .covers-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .piano-container {
+    padding: 1rem;
+  }
+  
+  .covers-page {
+    padding: 1rem;
+  }
 }
